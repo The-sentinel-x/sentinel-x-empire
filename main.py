@@ -46,7 +46,7 @@ st.markdown("---")
 
 col1, col2, col3 = st.columns(3)
 _, _, free = shutil.disk_usage("/")
-battery = psutil.sensors_battery()
+battery = None  # cloud server bypass
 
 with col1:
     st.metric("💾 DISK CAPACITY", f"{free // (2**30)} GB FREE")
@@ -76,4 +76,5 @@ if os.path.exists("Empire_Records/news_report.txt"):
                 </div>
                 """, unsafe_allow_html=True)
 else:
+
     st.warning("SYSTEM IDLE. AWAITING SCAN COMMAND.")
