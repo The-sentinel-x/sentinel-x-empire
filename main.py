@@ -40,39 +40,23 @@ if not st.session_state["logged"]:
             st.rerun()
         else: st.sidebar.error("Invalid Credentials")
 else:
-        # --- LOGGED IN CONTENT (Fixing Indentation Error) ---
-else:
-    st.sidebar.markdown("## 👑 Solo Founder")
-    st.sidebar.markdown(f"**ISMAIL: The Sentinel X**")
+        st.sidebar.markdown("## 👑 Solo Founder")
+    st.sidebar.markdown("**ISMAIL: The Sentinel X**")
     st.sidebar.markdown("---")
 
-    # Command Center Dropdown
-    page = st.sidebar.selectbox("Command Center", ["Global Map", "Threat Tracker", "Intelligence Feed"])
+    page = st.sidebar.selectbox("Command Center", ["Global Map", "Threat Tracker"])
 
     if st.sidebar.button("Logout"):
         st.session_state["logged"] = False
         st.rerun()
 
-    # --- MAIN HUB DASHBOARD ---
     if page == "Global Map":
-        st.title("🛡️ SENTINEL-X GLOBAL SURVEILLANCE")
+        st.title("🛡️ SENTINEL-X SURVEILLANCE")
         import pandas as pd
         import numpy as np
-        map_data = pd.DataFrame(
-            np.random.randn(50, 2) / [10, 10] + [20.59, 78.96],
-            columns=['lat', 'lon']
-        )
+        map_data = pd.DataFrame(np.random.randn(50, 2) / [10, 10] + [20.59, 78.96], columns=['lat', 'lon'])
         st.map(map_data)
-        st.success("Tracking 50+ Global Nodes... All Systems Green.")
-
+    
     elif page == "Threat Tracker":
         st.title("🚨 LIVE THREAT ALERTS")
-        st.error("Cyber Attack Blocked: IP 192.168.1.1 (Security Level: HIGH)")
-        st.warning("Unauthorized Access Attempt: North Server - Intercepted.")
-        st.info("System Update: Encryption Protocol 5.0 Active.")
-
-    elif page == "Intelligence Feed":
-        st.title("📊 SENTINEL INTELLIGENCE")
-        st.write("Current Global Risk Level: **LOW**")
-        st.progress(15)
-        st.write("Founder's Private Notes: *Empire Expansion in Progress*")
+        st.error("Cyber Attack Blocked: IP 192.168.1.1")
