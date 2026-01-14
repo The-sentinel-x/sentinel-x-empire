@@ -42,7 +42,7 @@ if not st.session_state["logged"]:
 else:
     # --- LOGGED IN CONTENT ---
     st.sidebar.markdown("## 👑 Founder")
-    st.sidebar.markdown("**Mohd Omar**\nSentinel-X Hub")
+    st.sidebar.markdown("**ISMAIL:The sentinel x**\nSentinel-X Hub")
     if st.sidebar.button("Logout"):
         st.session_state["logged"] = False
         st.rerun()
@@ -59,3 +59,4 @@ else:
                 conn.commit()
                 st.success("You are on the list! 🔥")
             except: st.warning("Already there")
+
