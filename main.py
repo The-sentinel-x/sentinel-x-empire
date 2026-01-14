@@ -1,38 +1,37 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import time
 
 # Page Config
-st.set_page_config(page_title="SENTINEL-X HUB", layout="wide")
+st.set_page_config(page_title="SENTINEL-X", layout="wide", page_icon="🛡️")
 
-# --- CUSTOM CSS FOR PROFESSIONAL LOOK ---
+# --- GLOBAL STYLING (Founder's Theme) ---
 st.markdown("""
     <style>
-    .stApp { background-color: #050505; color: #00FF41; }
-    .ticker { background: #111; padding: 10px; border-bottom: 2px solid #00FF41; overflow: hidden; }
+    .stApp { background-color: #000000; color: #FFFFFF; }
+    [data-testid="stSidebar"] { background-color: #0a0a0a; border-right: 1px solid #ff4b4b; }
+    .stMetric { border: 1px solid #ff4b4b; padding: 10px; border-radius: 5px; background: #111; }
     </style>
     """, unsafe_allow_html=True)
-
-# --- LIVE NEWS TICKER (Decision 1) ---
-st.markdown("<div class='ticker'><marquee>🚨 SYSTEM ALERT: Global Threat Level at 24% | 🛡️ ENCRYPTION: 256-bit Active | 📡 SATELLITE LINK: India-Sector-7 Online...</marquee></div>", unsafe_allow_html=True)
 
 if "logged" not in st.session_state:
     st.session_state["logged"] = False
 
-# --- ACCESS CONTROL ---
+# --- SYSTEM ACCESS ---
 if not st.session_state["logged"]:
-    st.sidebar.title("🔒 Sentinel-X Login")
-    user = st.sidebar.text_input("Founder ID")
-    key = st.sidebar.text_input("Access Key", type="password")
-    if st.sidebar.button("ENTER HUB"):
+    st.sidebar.title("🔒 Sentinel-X Access")
+    email = st.sidebar.text_input("Founder ID")
+    password = st.sidebar.text_input("Key", type="password")
+    if st.sidebar.button("EXECUTE"):
         st.session_state["logged"] = True
         st.rerun()
 else:
-    # --- COMMAND CENTER ---
-    st.sidebar.image("https://cdn-icons-png.flaticon.com/512/9415/9415254.png", width=50) # New Icon
-    st.sidebar.markdown(f"### ISMAIL: THE SENTINEL X")
-    page = st.sidebar.radio("Navigation", ["AI Brain", "Surveillance Map", "Threat Log"])
+    # --- PERMANENT BRANDING (Decision: Red & White Shield) ---
+    st.sidebar.markdown("## 🛡️ SENTINEL-X") # Permanent Logo Text
+    st.sidebar.markdown(f"**ISMAIL: THE FOUNDER**")
+    st.sidebar.markdown("---")
+    
+    page = st.sidebar.radio("Navigation", ["AI Brain", "Global Surveillance", "Threat Log"])
     
     if st.sidebar.button("Shutdown System"):
         st.session_state["logged"] = False
@@ -40,15 +39,24 @@ else:
 
     if page == "AI Brain":
         st.title("🧠 NEURAL CORE ANALYSIS")
-        st.write("### AI Prediction: *Analyzing Satellite Data...*")
-        st.progress(45)
-        st.success("🟢 AI Suggestion: Secure Northern Servers Immediately.")
-        
-    elif page == "Surveillance Map":
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric(label="Global Threat Level", value="24%", delta="-2%")
+        with col2:
+            st.success("🟢 Neural Core: ACTIVE")
+            st.success("🟢 Security Protocols: ENCRYPTED")
+        st.write("---")
+        st.subheader("AI Prediction: *Scanning Satellites...*")
+        st.progress(65)
+
+    elif page == "Global Surveillance":
         st.title("🛡️ GLOBAL INTERCEPTORS")
+        # Map with 150 Active Nodes
         map_data = pd.DataFrame(np.random.randn(150, 2) / [25, 25] + [20.59, 78.96], columns=['lat', 'lon'])
         st.map(map_data)
-        
+
     elif page == "Threat Log":
         st.title("🚨 RECENT INTERCEPTIONS")
-        st.table({"Time": ["14:20", "15:45"], "Source": ["Unknown IP", "Proxy-X"], "Status": ["BLOCKED", "VAPORIZED"]})
+        st.table({"Time": ["14:20", "15:45", "16:10"], 
+                  "Source": ["Unknown IP", "Proxy-X", "Internal Probe"], 
+                  "Status": ["BLOCKED", "VAPORIZED", "QUARANTINED"]})
