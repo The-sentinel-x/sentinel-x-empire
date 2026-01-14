@@ -40,7 +40,7 @@ if not st.session_state["logged"]:
             st.rerun()
         else: st.sidebar.error("Invalid Credentials")
 else:
-    # --- LOGGED IN CONTENT (Fixing Indentation Error) ---
+        # --- LOGGED IN CONTENT (Fixing Indentation Error) ---
 else:
     st.sidebar.markdown("## 👑 Solo Founder")
     st.sidebar.markdown(f"**ISMAIL: The Sentinel X**")
