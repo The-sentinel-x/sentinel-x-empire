@@ -1,80 +1,61 @@
 import streamlit as st
-import psutil
-import shutil
-import requests
-import os
-import xml.etree.ElementTree as ET
+import sqlite3
+import hashlib
+from datetime import datetime
 
-# 1. Advanced Page Config
-st.set_page_config(page_title="SENTINEL-X COMMAND", page_icon="🕵️‍♂️", layout="wide")
+# Database logic
+conn = sqlite3.connect("users.db", check_same_thread=False)
+c = conn.cursor()
+c.execute('CREATE TABLE IF NOT EXISTS users (email TEXT UNIQUE, password TEXT)')
+c.execute('CREATE TABLE IF NOT EXISTS waitlist (email TEXT UNIQUE, joined_at TIMESTAMP)')
+conn.commit()
 
-# Custom Cyber Styling
-st.markdown("""
-    <style>
-    .main { background-color: #0e1117; color: #00ffcc; }
-    .stMetric { background-color: #161b22; border: 1px solid #00ffcc; padding: 15px; border-radius: 10px; }
-    .stButton>button { width: 100%; border-radius: 5px; background-color: #00ffcc; color: black; font-weight: bold; }
-    .news-card { background-color: #161b22; padding: 20px; border-radius: 10px; border-left: 5px solid #00ffcc; margin-bottom: 15px; }
-    </style>
-    """, unsafe_allow_html=True)
+def hash_pass(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
-if not os.path.exists("Empire_Records"):
-    os.makedirs("Empire_Records")
+# Branding & Page Config
+st.set_page_config(page_title="Sentinel-X Hub", layout="wide")
 
-# 2. Sidebar Controls
-st.sidebar.title("⚡ COMMAND CENTER")
-if st.sidebar.button("📡 SCAN GLOBAL INTELLIGENCE"):
-    with st.spinner("Intercepting Satellite Feeds..."):
+# Sidebar - Login/Founder Section
+if "logged" not in st.session_state:
+    st.session_state["logged"] = False
+
+if not st.session_state["logged"]:
+    st.sidebar.title("🔐 Sentinel-X Access")
+    choice = st.sidebar.selectbox("Action", ["Login", "Signup"])
+    email = st.sidebar.text_input("Email")
+    pw = st.sidebar.text_input("Password", type="password")
+    
+    if choice == "Signup" and st.sidebar.button("Create Account"):
         try:
-            r = requests.get("https://news.google.com/rss", timeout=10)
-            root = ET.fromstring(r.content)
-            news_data = ""
-            for item in root.findall('.//item')[:50]:
-                title = item.find('title').text
-                link = item.find('link').text
-                news_data += f"TITLE: {title}||LINK: {link}\n"
-            with open("Empire_Records/news_report.txt", "w", encoding="utf-8") as f:
-                f.write(news_data)
-            st.sidebar.success("DATA INTERCEPTED!")
+            c.execute("INSERT INTO users VALUES (?,?)", (email, hash_pass(pw)))
+            conn.commit()
+            st.sidebar.success("Account Created!")
+        except: st.sidebar.error("User exists")
+    
+    if choice == "Login" and st.sidebar.button("Login"):
+        c.execute("SELECT * FROM users WHERE email=? AND password=?", (email, hash_pass(pw)))
+        if c.fetchone():
+            st.session_state["logged"] = True
             st.rerun()
-        except Exception as e:
-            st.sidebar.error(f"SCAN FAILED: {e}")
-
-# 3. Dashboard UI
-st.title("🛡️ SENTINEL-X : GLOBAL SURVEILLANCE")
-st.markdown("---")
-
-col1, col2, col3 = st.columns(3)
-_, _, free = shutil.disk_usage("/")
-battery = None  # cloud server bypass
-
-with col1:
-    st.metric("💾 DISK CAPACITY", f"{free // (2**30)} GB FREE")
-with col2:
-    if battery:
-        st.metric("🔋 CORE ENERGY", f"{battery.percent}%", "CHARGING" if battery.power_plugged else "STABLE")
-with col3:
-    st.metric("🌐 UPLINK STATUS", "ENCRYPTED")
-
-st.markdown("---")
-
-# 4. Intelligence Feed
-st.header("🕵️ LIVE INTELLIGENCE STREAM")
-if os.path.exists("Empire_Records/news_report.txt"):
-    with open("Empire_Records/news_report.txt", "r", encoding="utf-8") as f:
-        lines = f.readlines()
-        for line in lines:
-            if "||" in line:
-                t, l = line.split("||")
-                clean_link = l.strip().replace("LINK: ", "")
-                st.markdown(f"""
-                <div class="news-card">
-                    <h4 style='color: #00ffcc;'>{t.replace("TITLE: ", "")}</h4>
-                    <a href='{clean_link}' target='_blank'>
-                        <button style='background-color: #00ffcc; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; color: black; font-weight: bold;'>Read Full Intel</button>
-                    </a>
-                </div>
-                """, unsafe_allow_html=True)
+        else: st.sidebar.error("Invalid Credentials")
 else:
+    # --- LOGGED IN CONTENT ---
+    st.sidebar.markdown("## 👑 Founder")
+    st.sidebar.markdown("**Mohd Omar**\nSentinel-X Hub")
+    if st.sidebar.button("Logout"):
+        st.session_state["logged"] = False
+        st.rerun()
 
-    st.warning("SYSTEM IDLE. AWAITING SCAN COMMAND.")
+    st.title("🛡️ SENTINEL-X HUB")
+    st.write("### Verified Intelligence - Before The World Reacts")
+
+    # Waitlist Section
+    with st.expander("🚀 JOIN PRO WAITLIST"):
+        wait_email = st.text_input("Enter email for Early Access")
+        if st.button("Join"):
+            try:
+                c.execute("INSERT INTO waitlist VALUES (?,?)", (wait_email, datetime.now()))
+                conn.commit()
+                st.success("You are on the list! 🔥")
+            except: st.warning("Already there")
