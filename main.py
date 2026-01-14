@@ -40,23 +40,28 @@ if not st.session_state["logged"]:
             st.rerun()
         else: st.sidebar.error("Invalid Credentials")
 else:
-    # --- LOGGED IN CONTENT ---
-    st.sidebar.markdown("## 👑 Founder")
-    st.sidebar.markdown("**ISMAIL:The sentinel x**\nSentinel-X Hub")
-    if st.sidebar.button("Logout"):
-        st.session_state["logged"] = False
-        st.rerun()
+    # --- LOGGED IN CONTENT (Replace only from here to bottom) ---
+st.sidebar.markdown("## 👑 Solo Founder")
+st.sidebar.markdown(f"**ISMAIL: The Sentinel X**")
+st.sidebar.markdown("---")
 
-    st.title("🛡️ SENTINEL-X HUB")
-    st.write("### Verified Intelligence - Before The World Reacts")
+if st.sidebar.button("Logout"):
+    st.session_state["logged"] = False
+    st.rerun()
 
-    # Waitlist Section
-    with st.expander("🚀 JOIN PRO WAITLIST"):
-        wait_email = st.text_input("Enter email for Early Access")
-        if st.button("Join"):
-            try:
-                c.execute("INSERT INTO waitlist VALUES (?,?)", (wait_email, datetime.now()))
-                conn.commit()
-                st.success("You are on the list! 🔥")
-            except: st.warning("Already there")
+# --- MAIN HUB DASHBOARD ---
+st.title("🛡️ SENTINEL-X GLOBAL INTELLIGENCE")
+st.write("### Live Surveillance Feed - World Status")
 
+# Agla Feature: World Map
+import pandas as pd
+import numpy as np
+
+# India center points for the map
+map_data = pd.DataFrame(
+    np.random.randn(50, 2) / [10, 10] + [20.59, 78.96],
+    columns=['lat', 'lon']
+)
+
+st.map(map_data)
+st.success("Global Monitoring Active: All Systems Normal.")
